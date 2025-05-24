@@ -12,9 +12,11 @@ from typing import List
 from src.data.stores import create_data_stores
 from src.components.upload import create_file_upload_component
 from src.components.signal_list import create_signal_list_component
+from src.components.plot_tiles import create_plot_tiles_component
 # Import callbacks to register them
 import src.callbacks.upload_callbacks
 import src.callbacks.signal_callbacks
+import src.callbacks.plot_callbacks
 
 
 def create_app() -> dash.Dash:
@@ -82,8 +84,7 @@ def create_app_layout() -> html.Div:
                     html.Div(
                         id='main-content',
                         children=[
-                            html.H3("Plot Area", className='plot-area-title'),
-                            html.P("Plot tiles will go here.")
+                            create_plot_tiles_component()
                         ],
                         className='main-content'
                     )
