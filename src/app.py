@@ -10,6 +10,9 @@ from dash import html, dcc
 from typing import List
 
 from src.data.stores import create_data_stores
+from src.components.upload import create_file_upload_component
+# Import callbacks to register them
+import src.callbacks.upload_callbacks
 
 
 def create_app() -> dash.Dash:
@@ -66,7 +69,9 @@ def create_app_layout() -> html.Div:
                         id='sidebar',
                         children=[
                             html.H3("Controls", className='sidebar-title'),
-                            html.P("File upload and signal selection will go here.")
+                            create_file_upload_component(),
+                            html.Hr(),
+                            html.P("Signal selection will appear here after file upload.")
                         ],
                         className='sidebar'
                     ),
@@ -93,7 +98,7 @@ def create_app_layout() -> html.Div:
 def main():
     """Main entry point for the application."""
     app = create_app()
-    app.run_server(debug=True)
+    app.run(debug=True)
 
 
 if __name__ == '__main__':
