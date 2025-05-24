@@ -26,14 +26,14 @@
   - [X] Store DataFrame in `parsed-data-store`
   - [X] Extract and store signal names in `signal-list-store`
 
-### Phase 3: Sidebar - Signal Selection & Plot Action (IN PROGRESS)
-- [ ] Add `html.Div` (e.g., `id='signal-list-display'`) to sidebar for listing signals
-- [ ] Implement callback to populate `signal-list-display` from `signal-list-store`
-  - [ ] For each signal, create a clickable HTML element (e.g., `html.Button` or styled `html.Div`)
-  - [ ] Implement callback for signal list items: on click, update `selected-signal-store` with the clicked signal's name
-- [ ] Add a "Plot to Active Tile" `html.Button` (e.g., `id='plot-button'`) to the sidebar
+### Phase 3: Sidebar - Signal Selection & Plot Action ✅ COMPLETED
+- [X] Add `html.Div` (e.g., `id='signal-list-display'`) to sidebar for listing signals
+- [X] Implement callback to populate `signal-list-display` from `signal-list-store`
+  - [X] For each signal, create a clickable HTML element (e.g., `html.Button` or styled `html.Div`)
+  - [X] Implement callback for signal list items: on click, update `selected-signal-store` with the clicked signal's name
+- [X] Add a "Plot to Active Tile" `html.Button` (e.g., `id='plot-button'`) to the sidebar
 
-### Phase 4: Main Canvas - Plot Tiles & Active Tile Selection
+### Phase 4: Main Canvas - Plot Tiles & Active Tile Selection (IN PROGRESS)
 - [ ] Define 4 `dcc.Graph` components as plot tiles in the main content area (e.g., `id='plot-tile-1'`). Make each tile (or a wrapper Div) clickable.
 - [ ] Implement callback for plot tiles: on click, update `active-tile-store` with the ID of the clicked tile.
 - [ ] Implement callback for the "Plot to Active Tile" button (`id='plot-button'`):
@@ -84,4 +84,16 @@
 - ✅ Converts SPICE data to Pandas DataFrame format
 - ✅ Stores parsed data and signal list in appropriate dcc.Store components
 - ✅ User-friendly upload interface with drag-and-drop support
-- ✅ Error handling and user feedback for upload issues 
+- ✅ Error handling and user feedback for upload issues
+
+### Phase 3: Signal Selection & Plot Action ✅
+- ✅ Signal list component created (`src/components/signal_list.py`)
+- ✅ Signal selection callbacks implemented (`src/callbacks/signal_callbacks.py`)
+- ✅ Interactive signal list with type classification (voltage, current, power)
+- ✅ Click-to-select signal functionality with visual feedback
+- ✅ Selected signal display with dynamic styling
+- ✅ "Plot to Active Tile" button with conditional enabling
+- ✅ Integration with data stores (selected-signal-store, tile-config-store)
+- ✅ Comprehensive test coverage with 24 passing tests
+- ✅ Signal type badges and hover effects for better UX
+- ✅ Plot action handling that updates tile configuration 

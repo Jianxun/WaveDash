@@ -4,14 +4,14 @@
 The project aims to build a modern, web-based dashboard for visualizing simulation data from SPICE/Ngspice ".raw" files (Project "WaveDash"). This tool will replace older desktop applications like GTKWave, offering a browser-based UI, Plotly/Dash interactivity, and shareable HTML exports. The backend will be Python, leveraging libraries like `spicelib` for parsing and `numpy/pandas` for data manipulation.
 
 ## Current State
-**Phase 2 COMPLETED** ✅ - File upload and SPICE parsing functionality is fully implemented and tested. The application now has:
-- Complete file upload interface with drag-and-drop support for .raw files
-- Full SPICE file parsing using spicelib with conversion to Pandas DataFrames
-- Comprehensive error handling and user feedback for upload issues
-- All data properly stored in dcc.Store components for use by other components
-- 12 passing tests including integration tests with real SPICE files
+**Phase 3 COMPLETED** ✅ - Signal selection interface and plot action functionality is fully implemented and tested. The application now has:
+- Complete interactive signal list with type classification and visual feedback
+- Click-to-select signal functionality with dynamic styling
+- "Plot to Active Tile" button with conditional enabling based on selections
+- All signal selection logic integrated with data stores
+- 24 passing tests including comprehensive coverage of signal selection components
 
-**Phase 3 IN PROGRESS** - Ready to implement signal selection interface and plot action button.
+**Phase 4 IN PROGRESS** - Ready to implement plot tiles and active tile selection functionality.
 
 ## Key Decisions
 - Build a new application (WaveDash) using Python, Dash, and Plotly.
@@ -55,10 +55,25 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 - ✅ Comprehensive test suite (12 passing tests) including integration tests
 - ✅ Tested with real SPICE files from raw_data/ directory
 
-### Next: Phase 3 - Signal Selection Interface
-- Implement signal list display component
-- Add signal selection callbacks
-- Create "Plot to Active Tile" button functionality
+### Phase 3: Signal Selection Interface ✅ COMPLETED
+- ✅ Signal list component (`src/components/signal_list.py`) with:
+  - Interactive signal list display with scrollable container
+  - Signal type classification and color-coded badges (voltage, current, power)
+  - Click-to-select functionality with visual selection feedback
+  - Selected signal display with dynamic styling
+  - "Plot to Active Tile" button with conditional enabling
+- ✅ Signal selection callbacks (`src/callbacks/signal_callbacks.py`) supporting:
+  - Dynamic signal list population from parsed data
+  - Pattern-matching click detection for signal selection
+  - Selected signal state management
+  - Plot button state management based on signal/tile selection
+  - Tile configuration updates when plotting signals
+- ✅ Integration with all data stores (signal-list, selected-signal, tile-config, active-tile)
+- ✅ Comprehensive test coverage (24 passing tests) including component and interaction tests
+- ✅ User-friendly interface with type badges, hover effects, and clear visual feedback
+
+### Next: Phase 4 - Plot Tiles and Active Tile Selection
+- Implement plot tiles and active tile selection functionality
 
 ## Technical Implementation Details
 ### File Upload & Parsing Flow
