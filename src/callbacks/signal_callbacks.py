@@ -8,7 +8,7 @@ from dash import callback, Output, Input, State, ALL, ctx, no_update, html
 from typing import List, Dict, Any, Optional, Tuple
 import json
 
-from src.components.signal_list import create_signal_list_from_data, get_plot_button_style
+from src.components.signal_list import create_signal_list_from_data, get_plot_button_style, get_clear_button_style
 
 
 @callback(
@@ -114,42 +114,91 @@ def update_selected_signal_display(selected_signal: Optional[str]) -> html.P:
     [
         Output('plot-button', 'disabled'),
         Output('plot-button', 'style'),
-        Output('plot-button', 'children')
+        Output('plot-button', 'children'),
+        Output('clear-tile-button', 'disabled'),
+        Output('clear-tile-button', 'style')
     ],
     [
         Input('selected-signal-store', 'data'),
-        Input('active-tile-store', 'data')
+        Input('active-tile-store', 'data'),
+        Input('tile-config-store', 'data')
     ]
 )
-def update_plot_button_state(selected_signal: Optional[str], 
-                           active_tile: Optional[str]) -> Tuple[bool, Dict[str, Any], str]:
+def update_button_states(selected_signal: Optional[str], 
+                        active_tile: Optional[str],
+                        tile_config: Dict) -> Tuple[bool, Dict[str, Any], str, bool, Dict[str, Any]]:
     """
-    Update the plot button state based on signal selection and active tile.
+    Update the plot and clear button states based on signal selection and active tile.
     
     Args:
         selected_signal: Currently selected signal name
         active_tile: Currently active tile ID
+        tile_config: Current tile configuration
     
     Returns:
-        Tuple of (disabled_state, button_style, button_text).
+        Tuple of (plot_disabled, plot_style, plot_text, clear_disabled, clear_style).
     """
-    # Enable button only if both signal and tile are selected
-    enabled = bool(selected_signal and active_tile)
+    # Plot button logic
+    plot_enabled = bool(selected_signal and active_tile)
     
-    if enabled:
-        button_text = f"Plot '{selected_signal}' to Tile {active_tile[-1] if active_tile else ''}"
-        style = get_plot_button_style(True)
+    if plot_enabled:
+        plot_text = f"Add '{selected_signal}' to Tile {active_tile[-1] if active_tile else ''}"
+        plot_style = get_plot_button_style(True)
     elif selected_signal and not active_tile:
-        button_text = "Select a tile to plot to"
-        style = get_plot_button_style(False)
+        plot_text = "Select a tile to plot to"
+        plot_style = get_plot_button_style(False)
     elif not selected_signal and active_tile:
-        button_text = "Select a signal to plot"
-        style = get_plot_button_style(False)
+        plot_text = "Select a signal to plot"
+        plot_style = get_plot_button_style(False)
     else:
-        button_text = "Plot to Active Tile"
-        style = get_plot_button_style(False)
+        plot_text = "Plot to Active Tile"
+        plot_style = get_plot_button_style(False)
     
-    return not enabled, style, button_text
+    # Clear button logic
+    clear_enabled = bool(active_tile and tile_config and active_tile in tile_config)
+    
+    if clear_enabled:
+        clear_style = get_clear_button_style(True)
+    else:
+        clear_style = get_clear_button_style(False)
+    
+    return not plot_enabled, plot_style, plot_text, not clear_enabled, clear_style
+
+
+@callback(
+    Output('tile-config-store', 'data', allow_duplicate=True),
+    [
+        Input('clear-tile-button', 'n_clicks')
+    ],
+    [
+        State('active-tile-store', 'data'),
+        State('tile-config-store', 'data')
+    ],
+    prevent_initial_call=True
+)
+def handle_clear_tile_action(n_clicks: Optional[int],
+                           active_tile: Optional[str],
+                           current_config: Dict) -> Dict:
+    """
+    Handle the clear tile button click to remove all signals from active tile.
+    
+    Args:
+        n_clicks: Number of times clear button was clicked
+        active_tile: Currently active tile ID
+        current_config: Current tile configuration
+    
+    Returns:
+        Updated tile configuration with active tile cleared.
+    """
+    if not n_clicks or not active_tile:
+        return current_config or {}
+    
+    # Remove the active tile from configuration
+    updated_config = current_config.copy() if current_config else {}
+    if active_tile in updated_config:
+        del updated_config[active_tile]
+    
+    return updated_config
 
 
 @callback(
@@ -168,7 +217,7 @@ def handle_plot_action(n_clicks: Optional[int],
                       active_tile: Optional[str],
                       current_config: Dict) -> Dict:
     """
-    Handle the plot button click to assign signal to active tile.
+    Handle the plot button click to append signal to active tile for comparison.
     
     Args:
         n_clicks: Number of times plot button was clicked
@@ -177,14 +226,33 @@ def handle_plot_action(n_clicks: Optional[int],
         current_config: Current tile configuration
     
     Returns:
-        Updated tile configuration mapping tile IDs to signal names.
+        Updated tile configuration mapping tile IDs to signal lists.
     """
     if not n_clicks or not selected_signal or not active_tile:
         return current_config or {}
     
-    # Update the configuration
+    # Update the configuration to support multiple signals per tile
     updated_config = current_config.copy() if current_config else {}
-    updated_config[active_tile] = selected_signal
+    
+    # Get current signals for this tile (convert from old format if needed)
+    if active_tile in updated_config:
+        current_signals = updated_config[active_tile]
+        
+        # Handle migration from old single-signal format
+        if isinstance(current_signals, str):
+            # Convert old single signal to list format
+            current_signals = [current_signals]
+        elif not isinstance(current_signals, list):
+            current_signals = []
+    else:
+        current_signals = []
+    
+    # Add new signal if not already present (avoid duplicates)
+    if selected_signal not in current_signals:
+        current_signals.append(selected_signal)
+    
+    # Update configuration with signal list
+    updated_config[active_tile] = current_signals
     
     return updated_config
 

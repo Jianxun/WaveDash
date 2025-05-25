@@ -1,57 +1,51 @@
 # Project Todo List
 
-## Current Sprint (MVP Features)
+## 🚀 Current Sprint (Post-MVP Dashboard Evolution)
 
-### Phase 1: Project Setup & Basic Structure ✅ COMPLETED
-- [X] Initialize Git repository (if not done)
-- [X] Set up Python virtual environment
-- [X] Install dependencies: `dash`, `plotly`, `pandas`, `spicelib`
-- [X] Create `requirements.txt`
-- [X] Create main application file `src/app.py`
-- [X] Implement basic Dash app layout (Header, Sidebar, Main Content areas)
-- [X] Add `dcc.Store` components for:
-  - [X] `id='parsed-data-store'`
-  - [X] `id='signal-list-store'`
-  - [X] `id='tile-config-store'` (maps tile_id to signal_name)
-  - [X] `id='selected-signal-store'` (stores name of the currently selected signal)
-  - [X] `id='active-tile-store'` (stores id of the currently active plot tile)
+### Enhancement Phase: Multi-Signal Overlay Plotting ✅ COMPLETED
+- [X] Implement multi-signal tile support for signal comparison
+- [X] Change tile-config-store structure to support signal lists
+- [X] Create multi-signal plotting function with color differentiation
+- [X] Add "Clear Active Tile" button for signal management
+- [X] Update tile status display for multiple signals
+- [X] Ensure backward compatibility with existing single-signal format
+- [X] Update and fix tests for new functionality
+- [X] Validate all 41 tests passing
 
-### Phase 2: File Upload and Parsing ✅ COMPLETED
-- [X] Add `dcc.Upload` component to the sidebar for `.raw` files
-- [X] Implement callback for `dcc.Upload` to:
-  - [X] Decode uploaded file content
-  - [X] Parse `.raw` file using `spicelib.RawRead`
-  - [X] Extract traces and sweeps
-  - [X] Construct Pandas DataFrame (index=sweep, columns=signals)
-  - [X] Store DataFrame in `parsed-data-store`
-  - [X] Extract and store signal names in `signal-list-store`
+### Research Phase ✅ COMPLETED
+- [X] Research draggable dashboard options for Dash
+- [X] Evaluate dash-draggable vs dash-dynamic-grid-layout vs dash-resizable-panels
+- [X] Understand automatic layout recreation requirements
+- [X] Document findings and recommendations
 
-### Phase 3: Sidebar - Signal Selection & Plot Action ✅ COMPLETED
-- [X] Add `html.Div` (e.g., `id='signal-list-display'`) to sidebar for listing signals
-- [X] Implement callback to populate `signal-list-display` from `signal-list-store`
-  - [X] For each signal, create a clickable HTML element (e.g., `html.Button` or styled `html.Div`)
-  - [X] Implement callback for signal list items: on click, update `selected-signal-store` with the clicked signal's name
-- [X] Add a "Plot to Active Tile" `html.Button` (e.g., `id='plot-button'`) to the sidebar
+### Phase 6: Advanced Dashboard Implementation (IN PROGRESS)
+- [ ] **Decision**: Choose dashboard library (recommended: dash-dynamic-grid-layout)
+- [ ] Install and test chosen dashboard library with current WaveDash codebase
+- [ ] Design layout persistence system for automatic recreation
+- [ ] Implement transition from static 4-tile layout to dynamic grid
+- [ ] Create layout configuration storage mechanism
+- [ ] Add edit/view modes for dashboard interaction
+- [ ] Implement automatic plot recreation when data reloaded
+- [ ] Add ability to save/restore dashboard layouts
+- [ ] Test dashboard functionality with existing signal plotting system
+- [ ] Update tests to cover new dashboard functionality
 
-### Phase 4: Main Canvas - Plot Tiles & Active Tile Selection ✅ COMPLETED
-- [X] Define 4 `dcc.Graph` components as plot tiles in the main content area (e.g., `id='plot-tile-1'`). Make each tile (or a wrapper Div) clickable.
-- [X] Implement callback for plot tiles: on click, update `active-tile-store` with the ID of the clicked tile.
-- [X] Implement callback for the "Plot to Active Tile" button (`id='plot-button'`):
-  - [X] Inputs: `n_clicks` of `plot-button`, `data` from `selected-signal-store`, `data` from `active-tile-store`.
-  - [X] Logic: Update `tile-config-store` to map the `selected-signal` to the `active-tile`.
-- [X] Implement plotting callbacks for each `dcc.Graph` tile's `figure`:
-  - [X] Input: Signal name for the tile (derived from `tile-config-store` based on the tile's ID), data from `parsed-data-store`.
-  - [X] Logic: Retrieve data, create Plotly line chart (`go.Scattergl`).
-  - [X] Output: Plotly figure object (or empty/placeholder if no signal assigned to the tile).
+### Phase 7: Enhanced User Experience (PLANNED)
+- [ ] Add drag-and-drop signal assignment to tiles
+- [ ] Implement tile add/remove functionality
+- [ ] Create layout templates (2x2, 1x4, custom grids)
+- [ ] Add tile headers with signal information
+- [ ] Implement tile-specific settings (axis scaling, colors)
+- [ ] Add keyboard shortcuts for common actions
+- [ ] Create user preferences storage
 
-### Phase 5: Professional Styling and Layout ✅ COMPLETED
-- [X] Create comprehensive CSS file in `assets/style.css` for modern UI layout
-- [X] Implement proper sidebar and main canvas layout with independent scrolling
-- [X] Add visual feedback for signal selection and active tile states
-- [X] Style upload areas, buttons, and interactive elements with modern design
-- [X] Implement responsive design for different screen sizes
-- [X] Add custom scrollbar styling for better UX
-- [X] Ensure professional appearance with gradients, shadows, and transitions
+### Phase 8: Advanced Features Integration (PLANNED)
+- [ ] Integrate automatic layout recreation with file upload workflow
+- [ ] Add session management (save/load dashboard configurations)
+- [ ] Implement layout sharing functionality
+- [ ] Add dashboard export capabilities
+- [ ] Create layout import/export file format
+- [ ] Add undo/redo for layout changes
 
 ## 🎉 MVP COMPLETE + PROFESSIONAL STYLING! ✅
 
@@ -66,19 +60,42 @@
 - ✅ Independent scrolling for sidebar and main content areas
 - ✅ Beautiful visual design matching modern web application standards
 
-## Backlog
-- [ ] Drag-and-drop interface for plotting signals
-- [ ] Advanced "hierarchy" display for signals in sidebar (tree view)
+## Backlog (Post-Dashboard Implementation)
+- [ ] Advanced signal hierarchy display (tree view)
 - [ ] Zoom/pan synchronization across tiles (if desired)
 - [ ] Delta cursors and readouts
 - [ ] Math/derived traces functionality
 - [ ] FFT & spectrum tab/view
 - [ ] Huge-file handling optimizations (on-load decimation, lazy streaming)
-- [ ] Session save/share (export to standalone HTML, server-side session saving)
-- [ ] User configuration management
 - [ ] Real-time/streaming data support
 - [ ] Comprehensive testing (unit, E2E, performance)
 - [ ] Detailed documentation
+- [ ] Multi-theme support
+- [ ] Signal search and filtering
+- [ ] Plot annotations and markers
+- [ ] Data export capabilities
+- [ ] Performance profiling and optimization
+
+## Current Architecture Transition Planning
+
+### From Static MVP to Dynamic Dashboard:
+**Current State**: 4 static tiles with click-to-select interaction
+**Target State**: Dynamic grid with draggable tiles and automatic layout recreation
+
+### Key Technical Decisions Needed:
+1. **Dashboard Library**: dash-dynamic-grid-layout (recommended)
+2. **Layout Persistence**: Local storage + server-side backup
+3. **Data Integration**: Seamless integration with existing signal plotting system
+4. **User Experience**: Edit/view modes with intuitive drag-and-drop
+5. **Migration Strategy**: Gradual transition maintaining current functionality
+
+### Success Criteria for Dashboard Phase:
+- [ ] Users can drag and resize plot tiles
+- [ ] Layout configurations are automatically saved and restored
+- [ ] New data loading preserves and recreates previous dashboard layout
+- [ ] Performance remains smooth with dynamic layouts
+- [ ] All existing MVP functionality continues to work
+- [ ] Dashboard state persists across browser sessions
 
 ## Completed Tasks
 ### Phase 1: Project Setup & Basic Structure ✅

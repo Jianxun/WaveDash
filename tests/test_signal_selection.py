@@ -21,12 +21,13 @@ class TestSignalListComponent:
         component = create_signal_list_component()
         
         assert component.id == 'signal-selection-section'
-        assert len(component.children) == 4  # Title, List Display, Selected Display, Button
+        assert len(component.children) == 5  # Title, List Display, Selected Display, Plot Button, Clear Button
         
         # Check for signal list display
         signal_list_display = None
         selected_signal_display = None
         plot_button = None
+        clear_button = None
         
         for child in component.children:
             if hasattr(child, 'id'):
@@ -36,11 +37,14 @@ class TestSignalListComponent:
                     selected_signal_display = child
                 elif child.id == 'plot-button':
                     plot_button = child
+                elif child.id == 'clear-tile-button':
+                    clear_button = child
         
         assert signal_list_display is not None
         assert selected_signal_display is not None
         assert plot_button is not None
         assert plot_button.disabled == True
+        assert clear_button is not None
     
     def test_create_signal_item(self):
         """Test signal item creation."""

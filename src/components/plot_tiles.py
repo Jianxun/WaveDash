@@ -7,6 +7,7 @@ This module provides the main plotting area with 4 clickable plot tiles.
 from dash import html, dcc
 import plotly.graph_objects as go
 from typing import List, Dict, Any, Optional
+import pandas as pd
 
 
 def create_plot_tiles_component() -> html.Div:
@@ -178,6 +179,181 @@ def create_signal_plot_figure(signal_name: str, time_data: List[float],
     return fig
 
 
+def create_multi_signal_plot_figure(signal_names: List[str], time_data: List[float], 
+                                   df: 'pd.DataFrame', metadata: Dict, tile_id: str) -> go.Figure:
+    """
+    Create a plot figure for multiple overlaid signals for comparison.
+    
+    Args:
+        signal_names: List of signal names to plot
+        time_data: Time/frequency data for x-axis
+        df: DataFrame containing the signal data
+        metadata: Metadata about the simulation
+        tile_id: ID of the tile for error handling
+    
+    Returns:
+        Plotly figure with multiple signal traces overlaid.
+    """
+    fig = go.Figure()
+    
+    # Color palette for multiple signals
+    colors = [
+        '#1f77b4',  # Blue
+        '#ff7f0e',  # Orange  
+        '#2ca02c',  # Green
+        '#d62728',  # Red
+        '#9467bd',  # Purple
+        '#8c564b',  # Brown
+        '#e377c2',  # Pink
+        '#7f7f7f',  # Gray
+        '#bcbd22',  # Olive
+        '#17becf'   # Cyan
+    ]
+    
+    # Track valid signals and missing signals
+    valid_signals = []
+    missing_signals = []
+    
+    # Add traces for each signal
+    for i, signal_name in enumerate(signal_names):
+        if signal_name not in df.columns:
+            missing_signals.append(signal_name)
+            continue
+            
+        # Extract signal data
+        signal_data = df[signal_name].tolist()
+        color = colors[i % len(colors)]
+        
+        # Add the signal trace
+        fig.add_trace(
+            go.Scattergl(
+                x=time_data,
+                y=signal_data,
+                mode='lines',
+                name=signal_name,
+                line={'width': 2, 'color': color},
+                hovertemplate=f'<b>{signal_name}</b><br>' +
+                             'Time: %{x:.3e}<br>' +
+                             'Value: %{y:.3e}<br>' +
+                             '<extra></extra>'
+            )
+        )
+        valid_signals.append(signal_name)
+    
+    # Handle case where no valid signals were found
+    if not valid_signals:
+        tile_number = tile_id.split('-')[-1]
+        fig = create_empty_plot_figure(f"Plot Tile {tile_number}")
+        
+        if missing_signals:
+            missing_text = ', '.join(missing_signals)
+            fig.add_annotation(
+                text=f"Signal(s) not found in data:<br>{missing_text}",
+                x=0.5, y=0.5,
+                xref='paper', yref='paper',
+                showarrow=False,
+                font={'size': 14, 'color': '#ff0000'}
+            )
+        return fig
+    
+    # Determine axis labels based on metadata and signal types
+    x_label = metadata.get('independent_var', 'Time')
+    
+    # Use mixed units if signals have different types
+    signal_types = set()
+    for signal in valid_signals:
+        signal_types.add(_get_signal_type_from_name(signal))
+    
+    if len(signal_types) == 1:
+        # All signals are same type
+        signal_type = list(signal_types)[0]
+        y_label = _get_y_label_for_type(signal_type)
+    else:
+        # Mixed signal types
+        y_label = 'Amplitude (Mixed Units)'
+    
+    # Create title showing all signals
+    if len(valid_signals) == 1:
+        title_text = valid_signals[0]
+    elif len(valid_signals) <= 3:
+        title_text = ', '.join(valid_signals)
+    else:
+        title_text = f"{valid_signals[0]}, {valid_signals[1]} + {len(valid_signals)-2} more"
+    
+    fig.update_layout(
+        title={
+            'text': title_text,
+            'x': 0.5,
+            'xanchor': 'center',
+            'font': {'size': 16, 'color': '#1976d2'}
+        },
+        xaxis={
+            'title': x_label,
+            'showgrid': True,
+            'gridcolor': '#e0e0e0'
+        },
+        yaxis={
+            'title': y_label,
+            'showgrid': True,
+            'gridcolor': '#e0e0e0'
+        },
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        margin={'l': 60, 'r': 20, 't': 60, 'b': 60},
+        showlegend=len(valid_signals) > 1,  # Show legend only for multiple signals
+        legend={
+            'x': 1.02,
+            'y': 1,
+            'xanchor': 'left',
+            'yanchor': 'top',
+            'bgcolor': 'rgba(255,255,255,0.8)',
+            'bordercolor': '#dee2e6',
+            'borderwidth': 1
+        }
+    )
+    
+    # Add warning annotation for missing signals
+    if missing_signals:
+        missing_text = ', '.join(missing_signals)
+        fig.add_annotation(
+            text=f"⚠️ Missing: {missing_text}",
+            x=1, y=1,
+            xref='paper', yref='paper',
+            xanchor='right', yanchor='top',
+            showarrow=False,
+            font={'size': 10, 'color': '#ff6b35'},
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='#ff6b35',
+            borderwidth=1
+        )
+    
+    return fig
+
+
+def _get_signal_type_from_name(signal_name: str) -> str:
+    """Get signal type from signal name."""
+    signal_lower = signal_name.lower()
+    if signal_lower.startswith('v('):
+        return 'voltage'
+    elif signal_lower.startswith('i('):
+        return 'current'
+    elif signal_lower.startswith('p('):
+        return 'power'
+    else:
+        return 'other'
+
+
+def _get_y_label_for_type(signal_type: str) -> str:
+    """Get Y-axis label for signal type."""
+    type_labels = {
+        'voltage': 'Voltage (V)',
+        'current': 'Current (A)', 
+        'power': 'Power (W)',
+        'other': 'Amplitude'
+    }
+    return type_labels.get(signal_type, 'Amplitude')
+
+
 def get_tile_wrapper_style(is_active: bool) -> Dict[str, Any]:
     """
     Get styling for tile wrapper based on active state.
@@ -258,21 +434,36 @@ def _get_signal_y_label(signal_name: str) -> str:
         return 'Amplitude'
 
 
-def get_tile_status_text(signal_name: Optional[str], is_active: bool) -> str:
+def get_tile_status_text(signal_names: Optional[any], is_active: bool) -> str:
     """
     Get status text for tile header.
     
     Args:
-        signal_name: Name of signal plotted in this tile
+        signal_names: Signal name(s) plotted in this tile (string or list)
         is_active: Whether this tile is currently active
     
     Returns:
         Status text for the tile.
     """
-    if signal_name:
-        status = f"Plotting: {signal_name}"
-        if is_active:
-            status += " (Active)"
-        return status
-    else:
-        return "Active" if is_active else "Empty" 
+    # Handle both old format (single signal) and new format (signal list)
+    if signal_names:
+        # Convert to list format for consistent handling
+        if isinstance(signal_names, str):
+            signals = [signal_names]
+        elif isinstance(signal_names, list):
+            signals = signal_names
+        else:
+            signals = []
+        
+        if signals:
+            if len(signals) == 1:
+                status = f"Plotting: {signals[0]}"
+            else:
+                # Show count and first signal for multiple signals
+                status = f"Plotting {len(signals)} signals: {signals[0]}..."
+            
+            if is_active:
+                status += " (Active)"
+            return status
+    
+    return "Active" if is_active else "Empty" 

@@ -80,24 +80,34 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 - ✅ User-friendly interface with type badges, hover effects, and clear visual feedback
 
 ### Phase 4: Plot Tiles and Active Tile Selection ✅ COMPLETED
-- ✅ Plot tiles component (`src/components/plot_tiles.py`) with:
-  - 4 interactive plot tiles with clickable wrappers
-  - Tile headers showing tile number and current status
-  - Empty plot figures with instructional messaging
-  - Signal plot figures using Plotly go.Scattergl for performance
-  - Dynamic styling for active/inactive tile states
-  - Signal-specific axis labeling (voltage, current, power)
-- ✅ Plot callbacks (`src/callbacks/plot_callbacks.py`) supporting:
-  - Tile selection handling (click to activate)
-  - Dynamic tile styling based on active state
-  - Real-time status text updates
-  - Individual plot figure updates per tile
-  - DataFrame reconstruction from stored data
-  - Comprehensive error handling for plotting edge cases
-- ✅ Complete Plotly integration with professional styling and interactivity
-- ✅ Integration with all data stores (active-tile, tile-config, parsed-data)
-- ✅ Comprehensive test coverage (41 passing tests) including component and plotting tests
+- ✅ Plot tiles component created (`src/components/plot_tiles.py`)
+- ✅ Plot callbacks implemented (`src/callbacks/plot_callbacks.py`)
+- ✅ 4 interactive, clickable plot tiles with headers and status
+- ✅ Active tile selection with visual feedback (borders, colors)
+- ✅ Real-time tile status updates showing current signal assignments
+- ✅ Complete plotting functionality using Plotly go.Scattergl
+- ✅ Signal-specific axis labeling (voltage, current, power)
+- ✅ Error handling for plotting edge cases
+- ✅ Full integration with data stores (active-tile-store, tile-config-store, parsed-data-store)
+- ✅ Comprehensive test coverage with 41 passing tests
 - ✅ End-to-end workflow fully functional from file upload to interactive plotting
+
+### Phase 5: Professional Styling and Layout ✅ COMPLETED
+- ✅ Comprehensive CSS file created (`assets/style.css`) with modern UI design
+- ✅ Proper sidebar/main canvas layout with independent scrolling implemented
+- ✅ Professional visual design with gradients, shadows, and smooth transitions
+- ✅ Color-coded signal badges and interactive feedback elements
+- ✅ Responsive design supporting different screen sizes
+- ✅ Custom scrollbar styling for polished user experience
+- ✅ Fixed-width sidebar (350px) with flexible main content area
+- ✅ Full-height layout utilizing entire viewport efficiently
+- ✅ Production-ready modern web interface
+
+### Final Commit ✅
+- ✅ **Phase 4 & 5 committed to repository** (commit 2df4593)
+- ✅ **1,225 lines of code added** across 7 files
+- ✅ **Complete MVP with professional UI delivered**
+- ✅ **All 41 tests passing consistently**
 
 ### MVP ACHIEVEMENT ✅
 **WaveDash successfully delivers all core requirements:**
@@ -105,11 +115,76 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 - Modern browser-based UI replacing desktop tools like GTKWave
 - Dash/Plotly interactivity for modern user experience
 - Complete file parsing and plotting pipeline
+- Production-ready interface with professional styling
 - Extensible architecture ready for future enhancements
 
-### Next: Optional Enhancements
-- Advanced styling and visual polish
-- Additional features beyond MVP scope
+**PROJECT STATUS: MVP COMPLETE AND COMMITTED** 🚀
+
+## Enhancement: Multi-Signal Overlay Plotting ✅ COMPLETED
+**Major Feature Enhancement**: Implemented signal comparison through overlay plotting - signals now append to tiles instead of overwriting, enabling crucial waveform comparison functionality.
+
+### Key Enhancements Implemented:
+1. **Multi-Signal Tile Support**: Tiles can now display multiple overlaid signals for comparison
+2. **Signal Appending Logic**: Plot button adds signals to tiles instead of overwriting existing plots  
+3. **Clear Tile Functionality**: Added "Clear Active Tile" button to remove all signals from a tile
+4. **Enhanced Visual Feedback**: 
+   - Tile status shows signal count and names for multiple signals
+   - Different colors for each signal in overlay plots
+   - Legend display for multi-signal plots
+   - Warning annotations for missing signals
+5. **Backward Compatibility**: Handles migration from old single-signal format to new multi-signal format
+6. **Improved Button States**: Dynamic button text and styling based on context
+
+### Technical Implementation:
+- **Data Structure Change**: tile-config-store now supports `{tile_id: [signal_list]}` instead of `{tile_id: signal_name}`
+- **New Multi-Signal Plotting**: `create_multi_signal_plot_figure()` function with 10-color palette
+- **Smart Axis Labeling**: Mixed units detection for different signal types
+- **Enhanced Error Handling**: Graceful handling of missing signals with visual warnings
+- **UI Improvements**: Plot button now shows "Add" instead of "Plot", clear button for tile management
+
+### User Experience Impact:
+- **Engineering Workflow**: Users can now easily compare multiple waveforms on the same plot
+- **No Manual Recreation**: Previous signal comparisons are preserved when adding new signals
+- **Clear Management**: Easy removal of all signals from a tile to start fresh
+- **Visual Distinction**: Each signal gets a unique color for clear identification
+
+**All 41 tests passing** - Enhancement maintains full backward compatibility with existing functionality.
+
+## Next Phase Discussion (Post-MVP Dashboard Evolution)
+**Current Focus**: Transitioning from MVP to advanced dashboard with draggable tiles and automatic layout recreation.
+
+### Key Requirements for Next Phase:
+1. **Draggable Dashboard Implementation**: Replace static tiles with dynamic grid layout
+2. **Automatic Layout Recreation**: Save/restore layouts after simulation and data reload
+3. **Enhanced User Experience**: More flexible and intuitive dashboard interface
+
+### Research Findings: Dashboard Layout Options
+**Option 1: dash-draggable (MehdiChelh)**
+- Mature but unmaintained (4 years old)
+- Based on react-grid-layout 
+- Features: draggable/resizable grids, responsive breakpoints
+- Installation: `pip install dash-draggable`
+- Status: Functional but potential compatibility issues
+
+**Option 2: dash-dynamic-grid-layout (PipInstallPython)**
+- Actively maintained and modern (2024)
+- Based on react-grid-layout with recent updates
+- Features: draggable/resizable, dynamic add/remove components, edit modes
+- Installation: `pip install dash-dynamic-grid-layout`
+- Status: Actively developed with community support
+
+**Option 3: dash-resizable-panels (idling-mind)**
+- Simpler split-panel approach
+- Good for basic resizable layouts
+- Less suitable for full dashboard grid needs
+
+**Recommendation**: dash-dynamic-grid-layout appears to be the best option for WaveDash due to active maintenance and feature completeness.
+
+### Automatic Layout Recreation Strategy:
+1. **Layout Persistence**: Store tile configurations and signal mappings
+2. **State Management**: Save user-defined dashboard layouts  
+3. **Data Integration**: Automatically recreate plots when new data is loaded
+4. **Session Continuity**: Restore previous dashboard state on startup
 
 ## Technical Implementation Details
 ### File Upload & Parsing Flow
@@ -128,6 +203,14 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 - Complex signals converted to magnitude for plotting compatibility
 
 ## Open Questions (Post-MVP Focus)
+### Immediate Next Phase Questions:
+- Which draggable dashboard library to adopt (recommendation: dash-dynamic-grid-layout)?
+- How to implement automatic layout recreation with saved tile configurations?
+- What level of layout customization should be exposed to users?
+- How to handle the transition from current 4-tile static layout to dynamic grid?
+- Should we maintain backward compatibility with current static layout as fallback?
+
+### Future Architecture Considerations:
 - What are the specific performance requirements and optimization strategies for "huge-file handling"?
 - How will user configurations (e.g., plot preferences, themes) be managed?
 - Is real-time/streaming data from `libngspice` a requirement for future versions, and what would be the technical approach?

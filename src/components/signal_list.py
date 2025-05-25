@@ -78,6 +78,24 @@ def create_signal_list_component() -> html.Div:
                     'fontSize': '16px',
                     'cursor': 'not-allowed'
                 }
+            ),
+            
+            # Clear tile button
+            html.Button(
+                "Clear Active Tile",
+                id='clear-tile-button',
+                disabled=True,
+                style={
+                    'width': '100%',
+                    'padding': '8px',
+                    'margin': '5px 0',
+                    'backgroundColor': '#dc3545',
+                    'color': 'white',
+                    'border': 'none',
+                    'borderRadius': '4px',
+                    'fontSize': '14px',
+                    'cursor': 'not-allowed'
+                }
             )
         ],
         className='signal-selection-section'
@@ -248,6 +266,44 @@ def get_plot_button_style(enabled: bool) -> Dict[str, Any]:
             'border': 'none',
             'borderRadius': '4px',
             'fontSize': '16px',
+            'cursor': 'not-allowed',
+            'opacity': '0.6'
+        }
+
+
+def get_clear_button_style(enabled: bool) -> Dict[str, Any]:
+    """
+    Get styling for the clear button based on enabled state.
+    
+    Args:
+        enabled: Whether the button should be enabled
+    
+    Returns:
+        Dictionary with button styling.
+    """
+    if enabled:
+        return {
+            'width': '100%',
+            'padding': '8px',
+            'margin': '5px 0',
+            'backgroundColor': '#dc3545',
+            'color': 'white',
+            'border': 'none',
+            'borderRadius': '4px',
+            'fontSize': '14px',
+            'cursor': 'pointer',
+            'transition': 'background-color 0.2s'
+        }
+    else:
+        return {
+            'width': '100%',
+            'padding': '8px',
+            'margin': '5px 0',
+            'backgroundColor': '#6c757d',
+            'color': 'white',
+            'border': 'none',
+            'borderRadius': '4px',
+            'fontSize': '14px',
             'cursor': 'not-allowed',
             'opacity': '0.6'
         } 

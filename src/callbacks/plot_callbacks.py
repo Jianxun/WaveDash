@@ -12,6 +12,7 @@ import plotly.graph_objects as go
 from src.components.plot_tiles import (
     create_empty_plot_figure, 
     create_signal_plot_figure,
+    create_multi_signal_plot_figure,
     get_tile_wrapper_style,
     get_tile_header_style,
     get_tile_status_text
@@ -219,18 +220,27 @@ def _update_tile_figure(tile_id: str, tile_config: Dict,
     
     Args:
         tile_id: ID of the tile to update
-        tile_config: Configuration mapping tile IDs to signal names
+        tile_config: Configuration mapping tile IDs to signal names/lists
         parsed_data: Parsed SPICE data
     
     Returns:
-        Updated Plotly figure.
+        Updated Plotly figure with single or multiple signal traces.
     """
-    # Check if this tile has a signal assigned
+    # Check if this tile has any signals assigned
     if not tile_config or tile_id not in tile_config:
         tile_number = tile_id.split('-')[-1]
         return create_empty_plot_figure(f"Plot Tile {tile_number}")
     
-    signal_name = tile_config[tile_id]
+    signal_config = tile_config[tile_id]
+    
+    # Convert to list format for consistent handling
+    if isinstance(signal_config, str):
+        signal_names = [signal_config]
+    elif isinstance(signal_config, list):
+        signal_names = signal_config
+    else:
+        tile_number = tile_id.split('-')[-1]
+        return create_empty_plot_figure(f"Plot Tile {tile_number}")
     
     # Check if we have parsed data
     if not parsed_data or not parsed_data.get('data'):
@@ -246,32 +256,15 @@ def _update_tile_figure(tile_id: str, tile_config: Dict,
         # Convert back to DataFrame
         df = pd.DataFrame(df_data, index=index_data)
         
-        # Check if signal exists in the data
-        if signal_name not in df.columns:
-            tile_number = tile_id.split('-')[-1]
-            fig = create_empty_plot_figure(f"Plot Tile {tile_number}")
-            fig.add_annotation(
-                text=f"Signal '{signal_name}' not found in data",
-                x=0.5, y=0.5,
-                xref='paper', yref='paper',
-                showarrow=False,
-                font={'size': 14, 'color': '#ff0000'}
-            )
-            return fig
-        
-        # Extract signal data
-        time_data = index_data
-        signal_data = df[signal_name].tolist()
-        
-        # Create the plot
-        return create_signal_plot_figure(signal_name, time_data, signal_data, metadata)
+        # Create multi-signal plot
+        return create_multi_signal_plot_figure(signal_names, index_data, df, metadata, tile_id)
         
     except Exception as e:
         # Create error plot
         tile_number = tile_id.split('-')[-1]
         fig = create_empty_plot_figure(f"Plot Tile {tile_number}")
         fig.add_annotation(
-            text=f"Error plotting signal: {str(e)}",
+            text=f"Error plotting signals: {str(e)}",
             x=0.5, y=0.5,
             xref='paper', yref='paper',
             showarrow=False,
