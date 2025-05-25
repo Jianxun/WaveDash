@@ -2,6 +2,15 @@
 
 A modern web-based dashboard for visualizing simulation data from SPICE/Ngspice `.raw` files. WaveDash replaces older desktop applications like GTKWave with a browser-based UI featuring Plotly interactivity and a professional modern interface.
 
+![WaveDash MVP Screenshot](doc/Screenshot_MVP.png)
+*WaveDash MVP in action*
+
+**Key Features Visible:**
+- 🎯 **Left Sidebar**: File upload, signal list with type badges, and plot controls
+- 📊 **Multi-Tile Dashboard**: 4 independent plot areas for signal comparison
+- 🎨 **Professional UI**: Modern styling with gradients and interactive feedback
+- ⚡ **Plotly Integration**: Interactive zoom, pan, and hover controls on each plot
+
 ## 🚀 Quick Start - MVP Ready!
 
 ### Prerequisites
