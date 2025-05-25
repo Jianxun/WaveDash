@@ -8,6 +8,8 @@ and main application entry point.
 import dash
 from dash import html, dcc
 from typing import List
+import os
+from pathlib import Path
 
 from src.data.stores import create_data_stores
 from src.components.upload import create_file_upload_component
@@ -26,10 +28,16 @@ def create_app() -> dash.Dash:
     Returns:
         Configured Dash app instance.
     """
+    # Get the project root directory (parent of src folder)
+    current_dir = Path(__file__).parent
+    project_root = current_dir.parent
+    assets_folder = project_root / "assets"
+    
     app = dash.Dash(
         __name__,
         title="WaveDash - SPICE Waveform Viewer",
-        suppress_callback_exceptions=True
+        suppress_callback_exceptions=True,
+        assets_folder=str(assets_folder)
     )
     
     # Set the layout

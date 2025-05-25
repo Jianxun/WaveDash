@@ -4,21 +4,40 @@
 The project aims to build a modern, web-based dashboard for visualizing simulation data from SPICE/Ngspice ".raw" files (Project "WaveDash"). This tool will replace older desktop applications like GTKWave, offering a browser-based UI, Plotly/Dash interactivity, and shareable HTML exports. The backend will be Python, leveraging libraries like `spicelib` for parsing and `numpy/pandas` for data manipulation.
 
 ## Current State
-**🎉 MVP COMPLETED + PROFESSIONAL STYLING** ✅ - All core functionality is implemented, tested, and working end-to-end with a beautiful modern UI! WaveDash is now a fully functional SPICE waveform visualization tool with:
+**🎉 MVP COMPLETED + UI LAYOUT ISSUE RESOLVED + DEPENDENCIES STREAMLINED** ✅ - All core functionality is implemented, tested, and working end-to-end with a beautiful modern UI! The sidebar layout issue has been successfully resolved and dependencies have been cleaned up.
+
+**Current Features:**
 - Complete file upload and parsing pipeline (SPICE .raw files)
 - Interactive signal selection with type classification
 - 4 clickable plot tiles with active tile selection
 - Real-time plotting with Plotly integration
+- **Multi-signal overlay plotting** for signal comparison
 - Full end-to-end workflow: Upload → Select Signal → Select Tile → Plot → Interact
-- **Professional sidebar/main canvas layout with independent scrolling**
+- **Professional sidebar/main canvas layout working correctly**
 - **Modern UI design with gradients, shadows, and interactive feedback**
 - **Responsive design supporting different screen sizes**
 - 41 passing tests covering all functionality
 - Professional user interface with visual feedback and error handling
+- **Streamlined dependency management** with clean requirements.txt
+
+**Layout Issue Resolution:**
+- **Root Cause**: CSS assets folder not being loaded due to incorrect path when running `python src/app.py`
+- **Solution**: Added explicit `assets_folder` configuration in Dash app initialization and run with `python -m src.app`
+- **Result**: Sidebar now correctly appears to the left of main content in horizontal flexbox layout
+
+**Dependencies Cleanup:**
+- **Previous**: 202 packages including many unnecessary sub-dependencies (pyobjc frameworks, etc.)
+- **Current**: 8 core packages (dash, plotly, pandas, numpy, spicelib, pytest, requests, selenium)
+- **Benefit**: Faster installation, cleaner environment, easier maintenance
+- **Verification**: All 41 tests still passing
+
+**Project Organization:**
+- `/doc` - Documentation files
+- `/tools` - Development and diagnostic tools 
+- `/temp` - Temporary files, screenshots, and debug output
+- `/raw_data` - Sample SPICE files (Ring_Oscillator_7stage.raw for testing)
 
 **Application is ready for production use** with a polished, modern web interface that properly implements the discussed sidebar and main canvas layout.
-
-**Next Steps**: Optional Phase 5 styling improvements or additional features beyond MVP scope.
 
 ## Key Decisions
 - Build a new application (WaveDash) using Python, Dash, and Plotly.
@@ -26,6 +45,7 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 - Adopt a phased development approach, starting with an MVP as defined in `WaveDash_MVP_PRD.md`.
 - **MVP Interaction Model**: Implement a click-to-select signal, click-to-select active plot tile, and a button-to-plot mechanism, deferring drag-and-drop functionality.
 - Key MVP features include: `.raw` file upload and parsing, display of available signals, and plotting selected signals to user-selected tiles on a dashboard.
+- **Layout Fix**: Use `python -m src.app` for proper module imports and assets loading
 
 ## Architectural Decisions (MVP)
 - **Data Storage**: Pandas DataFrame with time as index, signals as columns
@@ -37,6 +57,35 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 - **Data Stores**: Use dcc.Store for parsed-data, signal-list, selected-signal, active-tile, and tile-config
 - **Plotting**: Use go.Scattergl for performance
 - **File Upload**: Base64 encoding/decoding with temporary file handling for spicelib compatibility
+- **Assets Configuration**: Explicit `assets_folder` path configuration for CSS loading
+
+## Technical Resolution Details
+### Sidebar Layout Issue Diagnosis and Fix
+**Problem**: Sidebar appearing above main content instead of to the left
+**Diagnosis Process**:
+1. Created diagnostic tools to inspect layout and CSS loading
+2. Discovered CSS not being loaded (display: block instead of display: flex)
+3. Found that all stylesheets were "inline" with no external CSS
+4. Identified assets folder path issue when running from src/ directory
+
+**Solution Implemented**:
+```python
+# Added to src/app.py
+current_dir = Path(__file__).parent
+project_root = current_dir.parent
+assets_folder = project_root / "assets"
+
+app = dash.Dash(
+    __name__,
+    assets_folder=str(assets_folder)  # Explicit assets path
+)
+```
+
+**Verification**: Layout diagnostic tools confirmed:
+- `display: flex` now applied to app-content
+- Sidebar width: 350px (correct)
+- Horizontal layout: sidebar beside main content
+- CSS rules properly loaded and applied
 
 ## Implementation Progress
 ### Phase 1: Project Setup & Basic Structure ✅ COMPLETED
@@ -103,24 +152,14 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 - ✅ Full-height layout utilizing entire viewport efficiently
 - ✅ Production-ready modern web interface
 
-### Final Commit ✅
-- ✅ **Phase 4 & 5 committed to repository** (commit 2df4593)
-- ✅ **1,225 lines of code added** across 7 files
-- ✅ **Complete MVP with professional UI delivered**
-- ✅ **All 41 tests passing consistently**
+### Phase 6: Layout Issue Resolution ✅ COMPLETED
+- ✅ **Diagnosed CSS loading issue** using custom diagnostic tools
+- ✅ **Fixed assets folder path** configuration in Dash app
+- ✅ **Verified layout working correctly** with sidebar left of main content
+- ✅ **Updated documentation** with proper run command (`python -m src.app`)
+- ✅ **Reorganized project structure** into /doc, /tools, /temp folders
 
-### MVP ACHIEVEMENT ✅
-**WaveDash successfully delivers all core requirements:**
-- Professional web-based SPICE waveform visualization
-- Modern browser-based UI replacing desktop tools like GTKWave
-- Dash/Plotly interactivity for modern user experience
-- Complete file parsing and plotting pipeline
-- Production-ready interface with professional styling
-- Extensible architecture ready for future enhancements
-
-**PROJECT STATUS: MVP COMPLETE AND COMMITTED** 🚀
-
-## Enhancement: Multi-Signal Overlay Plotting ✅ COMPLETED
+### Enhancement: Multi-Signal Overlay Plotting ✅ COMPLETED
 **Major Feature Enhancement**: Implemented signal comparison through overlay plotting - signals now append to tiles instead of overwriting, enabling crucial waveform comparison functionality.
 
 ### Key Enhancements Implemented:
@@ -150,6 +189,24 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 
 **All 41 tests passing** - Enhancement maintains full backward compatibility with existing functionality.
 
+### Final Commit ✅
+- ✅ **MVP with layout fix committed to repository**
+- ✅ **All functionality working end-to-end**
+- ✅ **Professional UI with correct sidebar layout**
+- ✅ **All 41 tests passing consistently**
+
+### MVP ACHIEVEMENT ✅
+**WaveDash successfully delivers all core requirements:**
+- Professional web-based SPICE waveform visualization
+- Modern browser-based UI replacing desktop tools like GTKWave
+- Dash/Plotly interactivity for modern user experience
+- Complete file parsing and plotting pipeline
+- Production-ready interface with professional styling
+- Extensible architecture ready for future enhancements
+- **Correct sidebar/main content layout working as designed**
+
+**PROJECT STATUS: MVP COMPLETE WITH WORKING UI LAYOUT** 🚀
+
 ## Next Phase Discussion (Post-MVP Dashboard Evolution)
 **Current Focus**: Transitioning from MVP to advanced dashboard with draggable tiles and automatic layout recreation.
 
@@ -159,32 +216,12 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 3. **Enhanced User Experience**: More flexible and intuitive dashboard interface
 
 ### Research Findings: Dashboard Layout Options
-**Option 1: dash-draggable (MehdiChelh)**
-- Mature but unmaintained (4 years old)
-- Based on react-grid-layout 
-- Features: draggable/resizable grids, responsive breakpoints
-- Installation: `pip install dash-draggable`
-- Status: Functional but potential compatibility issues
-
-**Option 2: dash-dynamic-grid-layout (PipInstallPython)**
-- Actively maintained and modern (2024)
-- Based on react-grid-layout with recent updates
-- Features: draggable/resizable, dynamic add/remove components, edit modes
-- Installation: `pip install dash-dynamic-grid-layout`
-- Status: Actively developed with community support
-
-**Option 3: dash-resizable-panels (idling-mind)**
-- Simpler split-panel approach
-- Good for basic resizable layouts
-- Less suitable for full dashboard grid needs
-
 **Recommendation**: dash-dynamic-grid-layout appears to be the best option for WaveDash due to active maintenance and feature completeness.
 
-### Automatic Layout Recreation Strategy:
-1. **Layout Persistence**: Store tile configurations and signal mappings
-2. **State Management**: Save user-defined dashboard layouts  
-3. **Data Integration**: Automatically recreate plots when new data is loaded
-4. **Session Continuity**: Restore previous dashboard state on startup
+## Open Questions
+- Choice of dashboard library for Phase 6 implementation
+- Layout persistence strategy (local storage vs server-side)
+- Migration approach from static to dynamic tiles
 
 ## Technical Implementation Details
 ### File Upload & Parsing Flow
@@ -198,23 +235,21 @@ The project aims to build a modern, web-based dashboard for visualizing simulati
 
 ### Data Structure
 - **parsed-data-store**: Contains DataFrame as dict with metadata
-- **signal-list-store**: List of signal names for selection interface
-- Independent variable (time/frequency) stored as DataFrame index
-- Complex signals converted to magnitude for plotting compatibility
+- **signal-list-store**: List of available signals with type classification
+- **selected-signal-store**: Currently selected signal name
+- **active-tile-store**: ID of currently active plot tile
+- **tile-config-store**: Dictionary mapping tile IDs to signal lists (multi-signal support)
 
-## Open Questions (Post-MVP Focus)
-### Immediate Next Phase Questions:
-- Which draggable dashboard library to adopt (recommendation: dash-dynamic-grid-layout)?
-- How to implement automatic layout recreation with saved tile configurations?
-- What level of layout customization should be exposed to users?
-- How to handle the transition from current 4-tile static layout to dynamic grid?
-- Should we maintain backward compatibility with current static layout as fallback?
+### Multi-Signal Plotting Implementation
+- **Enhanced Data Structure**: `{tile_id: [signal_name_1, signal_name_2, ...]}`
+- **Color Management**: 10-color palette for signal differentiation
+- **Legend Support**: Automatic legend generation for multi-signal plots
+- **Axis Labeling**: Smart detection of mixed signal types with appropriate units
 
-### Future Architecture Considerations:
-- What are the specific performance requirements and optimization strategies for "huge-file handling"?
-- How will user configurations (e.g., plot preferences, themes) be managed?
-- Is real-time/streaming data from `libngspice` a requirement for future versions, and what would be the technical approach?
-- What is the detailed long-term testing strategy (e.g., E2E, performance benchmarks, automated visual regression)?
-- What is the planned deployment strategy for wider use (e.g., Docker, PaaS)?
-- How will advanced features like math traces, FFT, and synchronized zoom/pan be integrated architecturally?
-- What level of extensibility (e.g., plugin system for custom math operations or plot types) is desired? 
+### Layout Architecture
+- **Main Container**: Full viewport height with flex column layout
+- **Header**: Fixed height with app branding
+- **App Content**: Flex row container for sidebar and main content
+- **Sidebar**: Fixed 350px width with independent scrolling
+- **Main Content**: Flexible width with plot tiles and independent scrolling
+- **Assets Loading**: Explicit assets folder path configuration for CSS loading 

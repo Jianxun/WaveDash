@@ -2,6 +2,21 @@
 
 ## 🚀 Current Sprint (Post-MVP Dashboard Evolution)
 
+### Project Maintenance ✅ COMPLETED
+- [X] **Cleaned up requirements.txt** removing unnecessary sub-dependencies
+- [X] **Streamlined dependencies** to core packages: dash, plotly, pandas, numpy, spicelib, pytest, requests, selenium
+- [X] **Verified functionality** with cleaned dependencies (all 41 tests passing)
+- [X] **Updated documentation** to reflect streamlined installation process
+
+### Layout Issue Resolution ✅ COMPLETED
+- [X] **Diagnosed UI layout issue** where sidebar appeared above instead of left of main content
+- [X] **Created diagnostic tools** to inspect CSS loading and layout computed styles
+- [X] **Identified root cause**: CSS assets folder not being loaded due to incorrect path
+- [X] **Fixed assets folder configuration** in Dash app initialization
+- [X] **Verified layout working correctly** with sidebar in proper left position
+- [X] **Updated documentation** with correct run command (`python -m src.app`)
+- [X] **Reorganized project structure** into /doc, /tools, /temp folders
+
 ### Enhancement Phase: Multi-Signal Overlay Plotting ✅ COMPLETED
 - [X] Implement multi-signal tile support for signal comparison
 - [X] Change tile-config-store structure to support signal lists
@@ -18,7 +33,7 @@
 - [X] Understand automatic layout recreation requirements
 - [X] Document findings and recommendations
 
-### Phase 6: Advanced Dashboard Implementation (IN PROGRESS)
+### Phase 7: Advanced Dashboard Implementation (READY TO START)
 - [ ] **Decision**: Choose dashboard library (recommended: dash-dynamic-grid-layout)
 - [ ] Install and test chosen dashboard library with current WaveDash codebase
 - [ ] Design layout persistence system for automatic recreation
@@ -30,7 +45,7 @@
 - [ ] Test dashboard functionality with existing signal plotting system
 - [ ] Update tests to cover new dashboard functionality
 
-### Phase 7: Enhanced User Experience (PLANNED)
+### Phase 8: Enhanced User Experience (PLANNED)
 - [ ] Add drag-and-drop signal assignment to tiles
 - [ ] Implement tile add/remove functionality
 - [ ] Create layout templates (2x2, 1x4, custom grids)
@@ -39,7 +54,7 @@
 - [ ] Add keyboard shortcuts for common actions
 - [ ] Create user preferences storage
 
-### Phase 8: Advanced Features Integration (PLANNED)
+### Phase 9: Advanced Features Integration (PLANNED)
 - [ ] Integrate automatic layout recreation with file upload workflow
 - [ ] Add session management (save/load dashboard configurations)
 - [ ] Implement layout sharing functionality
@@ -47,7 +62,7 @@
 - [ ] Create layout import/export file format
 - [ ] Add undo/redo for layout changes
 
-## 🎉 MVP COMPLETE + PROFESSIONAL STYLING! ✅
+## 🎉 MVP COMPLETE + LAYOUT ISSUE RESOLVED! ✅
 
 ### Core MVP Functionality Achieved:
 - ✅ Upload and parse SPICE .raw files
@@ -59,6 +74,15 @@
 - ✅ Professional modern UI with proper sidebar/main canvas layout
 - ✅ Independent scrolling for sidebar and main content areas
 - ✅ Beautiful visual design matching modern web application standards
+- ✅ **Sidebar layout working correctly** (left of main content)
+
+### Technical Achievements:
+- ✅ **CSS assets properly loaded** with explicit assets folder configuration
+- ✅ **Correct flexbox layout** displaying sidebar horizontally beside main content
+- ✅ **Multi-signal overlay plotting** for signal comparison
+- ✅ **Proper module structure** with `python -m src.app` execution
+- ✅ **Organized project structure** with /doc, /tools, /temp folders
+- ✅ **Updated README** with comprehensive usage instructions
 
 ## Backlog (Post-Dashboard Implementation)
 - [ ] Advanced signal hierarchy display (tree view)
@@ -76,11 +100,17 @@
 - [ ] Data export capabilities
 - [ ] Performance profiling and optimization
 
-## Current Architecture Transition Planning
+## Current Architecture Status
 
 ### From Static MVP to Dynamic Dashboard:
-**Current State**: 4 static tiles with click-to-select interaction
+**Current State**: 4 static tiles with click-to-select interaction + working sidebar layout
 **Target State**: Dynamic grid with draggable tiles and automatic layout recreation
+
+### Key Technical Decisions Made:
+1. **Layout Issue**: Resolved by proper assets folder configuration
+2. **Run Command**: Use `python -m src.app` for proper module imports
+3. **Project Structure**: Organized into logical folders (/doc, /tools, /temp)
+4. **Sample Data**: Use Ring_Oscillator_7stage.raw (not .op.raw)
 
 ### Key Technical Decisions Needed:
 1. **Dashboard Library**: dash-dynamic-grid-layout (recommended)
@@ -145,5 +175,47 @@
 - ✅ Comprehensive test coverage with 41 passing tests
 - ✅ End-to-end workflow: Upload → Select Signal → Select Tile → Plot → Interact
 
-## 🚀 MVP DELIVERED!
-**WaveDash is now a fully functional SPICE waveform visualization tool!** 
+### Phase 5: Professional Styling and Layout ✅
+- ✅ Comprehensive CSS file created (`assets/style.css`) with modern UI design
+- ✅ Proper sidebar/main canvas layout with independent scrolling implemented
+- ✅ Professional visual design with gradients, shadows, and smooth transitions
+- ✅ Color-coded signal badges and interactive feedback elements
+- ✅ Responsive design supporting different screen sizes
+- ✅ Custom scrollbar styling for polished user experience
+- ✅ Fixed-width sidebar (350px) with flexible main content area
+- ✅ Full-height layout utilizing entire viewport efficiently
+- ✅ Production-ready modern web interface
+
+### Phase 6: Multi-Signal Enhancement ✅
+- ✅ Enhanced tile-config-store to support multiple signals per tile
+- ✅ Multi-signal plotting function with color differentiation
+- ✅ "Clear Active Tile" button for tile management
+- ✅ Enhanced visual feedback for multi-signal plots
+- ✅ Backward compatibility with existing single-signal format
+- ✅ All tests updated and passing (41 tests)
+
+### Phase 7: Layout Issue Resolution ✅
+- ✅ **Diagnosed CSS loading issue** using custom diagnostic tools
+- ✅ **Identified root cause**: assets folder path incorrect when running from src/
+- ✅ **Fixed assets folder configuration** in Dash app initialization
+- ✅ **Verified correct layout** with sidebar properly positioned left of main content
+- ✅ **Updated run command** to use `python -m src.app` for proper module imports
+- ✅ **Reorganized project structure** with /doc, /tools, /temp folders
+- ✅ **Updated README** with comprehensive usage instructions and troubleshooting
+
+## 🚀 MVP DELIVERED + LAYOUT FIXED!
+**WaveDash is now a fully functional SPICE waveform visualization tool with correct layout!** 
+
+### Current Application State:
+- ✅ **All core features working end-to-end**
+- ✅ **Professional UI with sidebar correctly positioned left of main content**
+- ✅ **Multi-signal overlay plotting for signal comparison**
+- ✅ **Comprehensive documentation and sample workflow**
+- ✅ **Production-ready for SPICE waveform visualization**
+
+### Usage Instructions:
+1. **Start**: `python -m src.app`
+2. **Load Sample**: Upload `raw_data/Ring_Oscillator_7stage.raw`
+3. **Plot Signals**: Select signals like `v(out)`, `v(n1)`, `v(n2)`
+4. **Compare**: Add multiple signals to same tile
+5. **Interact**: Use Plotly zoom/pan controls 
